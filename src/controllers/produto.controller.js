@@ -2,27 +2,80 @@ import produtoModel from "../models/produto.model.js";
 
 const produtoController = {
     // Cadastrar produto
+    // cadastrarProduto: async (req, res) => {
+    //     try {
+
+    //         const { idCategoria, nomeProduto, valorProduto } = req.body;
+
+    //         // Validação básica
+    //         if (!idCategoria || !nomeProduto || !valorProduto) {
+    //             return res.status(400).json({
+    //                 message: "idCategoria, nomeProduto e valorProduto são obrigatórios"
+    //             });
+    //         }
+
+    //         // Verifica se imagem foi enviada
+    //         if (!req.file) {
+    //             return res.status(400).json({
+    //                 message: "A imagem do produto é obrigatória"
+    //             });
+    //         }
+
+    //         const vinculoImagem = req.file.filename; // Nome gerado pelo multer
+
+    //         const novoProduto = {
+    //             idCategoria,
+    //             nomeProduto,
+    //             valorProduto,
+    //             vinculoImagem,
+    //             dataCad: new Date()
+    //         };
+
+    //         await produtoModel.insert(novoProduto);
+
+    //         return res.status(201).json({
+    //             message: "Produto cadastrado com sucesso"
+    //         });
+
+
+
+    //     } catch (error) {
+    //         console.error(error);
+    //         res.status(500).json({ message: 'Erro no servidor', errorMessage: error.message });
+    //     }
+    // },
+
     cadastrarProduto: async (req, res) => {
         try {
-            const { idCategoria, nomeProduto, valorProduto } = req.params;
-            
-            const { vinculoImagem } = "teste"
+            const { nomeProduto } = req.body;
+            const valorProduto = Number(req.body.valorProduto);
+            const idCategoria = Number(req.body.idCategoria);
+            const vinculoImagem = req.file.path ? req.file.filename : null;
 
-            if (!idCategoria || !nomeProduto || !valorProduto) {
-                return res.status(400).json({ message: 'idCategoria, nomeProduto e valorProduto são obrigatórios' });
+            // Validação básica de dados
+            if (!nomeProduto || !valorProduto || !idCategoria) {
+                return res.status(400).json({
+                    message: "Dados incompletos ou inválidos"
+                });
             }
 
-            const result = await produtoModel.inserir({
-                idCategoria,
+            // Chamada da camada Model
+            const idProduto = await produtoModel.criarProduto(
                 nomeProduto,
                 valorProduto,
-                vinculoImagem: vinculoImagem || ''
-            });
+                idCategoria,
+                vinculoImagem
+            );
 
-            return res.status(400).json({ message: 'Erro ao cadastrar produto' });
+            return res.status(201).json({
+                message: "Produto criado com sucesso",
+                id: idProduto
+            });
         } catch (error) {
-            console.error(error);
-            res.status(500).json({ message: 'Erro no servidor', errorMessage: error.message });
+            console.error("Erro ao criar produto:", error);
+            return res.status(500).json({
+                message: "Erro ao criar produto"
+            });
         }
     },
 

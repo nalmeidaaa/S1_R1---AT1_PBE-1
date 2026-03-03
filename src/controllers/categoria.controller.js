@@ -3,21 +3,20 @@ import categoriaModel from "../models/categoria.model.js";
 const categoriaController = {
     // Cadastrar categoria
     cadastrarCategoria: async (req, res) => {
-    try {
-        const { descricaoCategoria } = req.body;
+        try {
+            const { descricaoCategoria } = req.form-data;
+            const data = new Date();
+            if (!descricaoCategoria) {
+                return res.status(400).json({ message: 'Descrição da categoria é obrigatória' });
+            }
+            const result = await categoriaModel.inserir({ descricaoCategoria, data });
 
-        if (!descricaoCategoria) {
-            return res.status(400).json({ message: 'Descrição da categoria é obrigatória' });
+            return res.status(200).json({ message: 'Categoria cadastrada com sucesso.' });
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ message: 'Erro no servidor', errorMessage: error.message });
         }
-
-        const result = await categoriaModel.inserir({ descricaoCategoria });
-        
-        return res.status(400).json({ message: 'Erro ao cadastrar categoria' });
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Erro no servidor', errorMessage: error.message });
-    }
-},
+    },
 
 
     // Selecionar todas as categorias
