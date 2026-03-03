@@ -4,9 +4,9 @@ const categoriaModel = {
     inserir: async (pCategoria) => {
         const sql = 'INSERT INTO Categoria (descricaoCategoria) VALUES (?)';
         const values = [pCategoria.descricaoCategoria];
-        const [rows] = await pool.execute(sql, values);
-        return rows;
+        const [result] = await pool.execute(sql, values);
     },
+
     selecionarTodos: async () => {
         const sql = "SELECT * FROM Categoria ORDER BY idCategoria DESC";
         const [rows] = await pool.execute(sql);

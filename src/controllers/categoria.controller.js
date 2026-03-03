@@ -3,27 +3,22 @@ import categoriaModel from "../models/categoria.model.js";
 const categoriaController = {
     // Cadastrar categoria
     cadastrarCategoria: async (req, res) => {
-        try {
-            const { descricaoCategoria } = req.body;
+    try {
+        const { descricaoCategoria } = req.body;
 
-            if (!descricaoCategoria) {
-                return res.status(400).json({ message: 'Descrição da categoria é obrigatória' });
-            }
-
-            const result = await categoriaModel.insert({ descricaoCategoria });
-
-            if (result.insertId > 0) {
-                return res.status(201).json({ 
-                    message: 'Categoria cadastrada com sucesso',
-                    idCategoria: result.insertId
-                });
-            }
-            return res.status(400).json({ message: 'Erro ao cadastrar categoria' });
-        } catch (error) {
-            console.error(error);
-            res.status(500).json({ message: 'Erro no servidor', errorMessage: error.message });
+        if (!descricaoCategoria) {
+            return res.status(400).json({ message: 'Descrição da categoria é obrigatória' });
         }
-    },
+
+        const result = await categoriaModel.inserir({ descricaoCategoria });
+        
+        return res.status(400).json({ message: 'Erro ao cadastrar categoria' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Erro no servidor', errorMessage: error.message });
+    }
+},
+
 
     // Selecionar todas as categorias
     listarCategorias: async (req, res) => {
@@ -68,7 +63,7 @@ const categoriaController = {
                 return res.status(404).json({ message: 'Categoria não encontrada' });
             }
 
-            await categoriaModel.update({ idCategoria: id, descricaoCategoria });
+            await categoriaModel.atualizar({ idCategoria: id, descricaoCategoria });
 
             return res.status(200).json({ message: 'Categoria atualizada com sucesso' });
         } catch (error) {
@@ -87,7 +82,7 @@ const categoriaController = {
                 return res.status(404).json({ message: 'Categoria não encontrada' });
             }
 
-            await categoriaModel.delete(id);
+            await categoriaModel.deletar(id);
 
             return res.status(200).json({ message: 'Categoria excluída com sucesso' });
         } catch (error) {
